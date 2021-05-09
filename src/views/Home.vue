@@ -1,17 +1,71 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <CGrid
+      template-rows="3.7rem auto 5rem"
+      template-columns="calc(100% - 20rem) 20rem"
+      h="100vh"
+    >
+      <CFlex
+        background="rgba(207, 221, 248, 0.2)"
+        grid-column-start="1"
+        grid-column-end="1"
+        align="center"
+        justify-content="center"
+        box-shadow="lg"
+        z-index="900"
+      >
+        <CHeading color="gray">
+          Haklr Meet
+        </CHeading>
+      </CFlex>
+
+      <CFlex
+        background="#F9F9F9"
+        align="center"
+        grid-column-start="1"
+        justify-content="center"
+        z-index="300"
+      >
+        <span my="auto" vertical-align="center" v-chakra>
+          A Video
+        </span>
+      </CFlex>
+
+      <CFlex
+        background="rgba(223, 232, 250, 0.2)"
+        grid-column-start="2"
+        grid-row-start="1"
+        grid-row-end="4"
+        justify-content="center"
+        z-index="950"
+      >
+        <Chat p="5" pt="6" v-chakra> </Chat>
+      </CFlex>
+      <CFlex
+        grid-column-start="1"
+        grid-column-end="2 "
+        align="center"
+        justify-content="center"
+        background="rgba(223, 232, 250, 0.2)"
+        z-index="900"
+        box-shadow="0rem 0rem 1rem 0.3rem rgba(0,0,0,0.2)"
+        gap="5px"
+      >
+        <Control />
+      </CFlex>
+    </CGrid>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import { Component, Vue } from "vue-property-decorator";
+import Chat from "./../components/Chat.vue";
+import Control from "./../components/Control.vue";
 
 @Component({
   components: {
-    HelloWorld,
+    Chat,
+    Control,
   },
 })
 export default class Home extends Vue {}
