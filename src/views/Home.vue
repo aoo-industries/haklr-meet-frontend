@@ -26,9 +26,28 @@
         justify-content="center"
         z-index="300"
       >
-        <span my="auto" vertical-align="center" v-chakra>
-          A Video
-        </span>
+        <video
+          id="vid2"
+          :style="playing ? undefined : 'display: none'"
+          autoplay
+          playsinline
+          h="100%"
+          v-chakra
+        ></video>
+        <CFlex v-if="!playing" direction="column" gap="1rem" max-w="30rem">
+          <CHeading>
+            Hi.
+          </CHeading>
+          <CText>
+           This is your Meet room. There is currently no video transferring. Let's start a call!
+          </CText>
+          <CFlex gap="1rem">
+          <CInput placeholder="Enter the ID" v-model="callID" />
+          <CButton @click="call(undefined)">
+            Call
+          </CButton>
+          </CFlex>
+        </CFlex>
       </CFlex>
 
       <CFlex
@@ -61,12 +80,63 @@
 import { Component, Vue } from "vue-property-decorator";
 import Chat from "./../components/Chat.vue";
 import Control from "./../components/Control.vue";
-
+import Peer, { DataConnection } from "peerjs";
 @Component({
   components: {
     Chat,
     Control,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  connection!: DataConnection;
+  peer!: Peer;
+  vid2!: HTMLMediaElement;
+  callID = "";
+  playing = false;
+
+  mounted() {
+    const vid1 = document.getElementById("vid1");
+    this.vid2 = document.getElementById("vid2") as HTMLMediaElement;
+
+    this.peer = new Peer(
+      "" + Math.floor(Math.random() * 36 ** 10).toString(36)
+    );
+    this.peer.on("open", () => {
+      console.log("Your ID is: " + this.peer.id);
+    });
+
+    this.peer.on("connection", (conn) => {
+      console.log(conn);
+      this.connection = conn;
+      conn.on("data", (data) => {
+        console.log(data);
+      });
+    });
+    this.peer.on("call", async (call) => {
+      call.answer(
+        await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+      );
+      call.on("stream", (stream) => {
+        this.playing = true;
+        this.vid2.srcObject = stream;
+      });
+    });
+  }
+  connect(id: string) {
+    this.connection = this.peer.connect(id);
+  }
+  async call(id: string = this.callID) {
+    console.log(id);
+    
+    const call = this.peer.call(
+      id,
+      await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+    );
+
+    call.on("stream", (stream) => {
+      this.playing = true;
+      this.vid2.srcObject = stream;
+    });
+  }
+}
 </script>
