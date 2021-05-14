@@ -39,13 +39,23 @@
             Hi.
           </CHeading>
           <CText>
-           This is your Meet room. There is currently no video transferring. Let's start a call!
+            This is your Meet room. There is currently no video transferring.
+            Let's start a call!
           </CText>
           <CFlex gap="1rem">
-          <CInput placeholder="Enter the ID" v-model="callID" />
-          <CButton @click="call(undefined)">
-            Call
-          </CButton>
+            <CInput placeholder="Enter the ID" v-model="callID" />
+            <CButton @click="call(undefined)">
+              Call
+            </CButton>
+          </CFlex>
+          <CFlex direction="column" mt="8">
+            <CText font-size="2xl">Your ID</CText>
+            <CFlex gap="1rem">
+              <CHeading size="xl">{{ myID }}</CHeading>
+              <CButton v-clipboard="() => myID" v-clipboard:success="copied">
+                Copy
+              </CButton>
+            </CFlex>
           </CFlex>
         </CFlex>
       </CFlex>
@@ -77,10 +87,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import Chat from "./../components/Chat.vue";
 import Control from "./../components/Control.vue";
 import Peer, { DataConnection } from "peerjs";
+
 @Component({
   components: {
     Chat,
@@ -91,6 +102,7 @@ export default class Home extends Vue {
   connection!: DataConnection;
   peer!: Peer;
   vid2!: HTMLMediaElement;
+  myID = "";
   callID = "";
   playing = false;
 
@@ -99,8 +111,9 @@ export default class Home extends Vue {
     this.vid2 = document.getElementById("vid2") as HTMLMediaElement;
 
     this.peer = new Peer(
-      "" + Math.floor(Math.random() * 36 ** 10).toString(36)
+      "" + Math.floor(Math.random() * 3 ** 10).toString(36).substring(0, 3)
     );
+    this.myID = this.peer.id;
     this.peer.on("open", () => {
       console.log("Your ID is: " + this.peer.id);
     });
@@ -127,7 +140,7 @@ export default class Home extends Vue {
   }
   async call(id: string = this.callID) {
     console.log(id);
-    
+
     const call = this.peer.call(
       id,
       await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
@@ -137,6 +150,13 @@ export default class Home extends Vue {
       this.playing = true;
       this.vid2.srcObject = stream;
     });
+  }
+  copied() {
+
+    this.myID = "copied";
+    setTimeout(() => {
+      this.myID = this.peer.id;
+    }, 1000);
   }
 }
 </script>
