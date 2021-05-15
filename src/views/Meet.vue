@@ -57,6 +57,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
+import store from "../store";
 import Chat from "../components/Chat.vue";
 import Control from "../components/Control.vue";
 import Video from "../components/Video.vue";
@@ -68,5 +69,9 @@ import Video from "../components/Video.vue";
     Video,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  mounted() {
+    console.log(store.state.user.nickname, store.state.userArray);
+  }
+}
 </script>

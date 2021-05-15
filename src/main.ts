@@ -1,20 +1,24 @@
-import Vue from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
-import router from './router'
-import store from './store'
-import Clipboard from 'v-clipboard'
+import Vue from "vue";
+import App from "./App.vue";
+import "./registerServiceWorker";
+import router from "./router";
+import store from "./store";
+import Clipboard from "v-clipboard";
+import EventEmitter from "events";
 
 //@ts-expect-error Not typed
-import Chakra from '@chakra-ui/vue'
+import Chakra from "@chakra-ui/vue";
 
-Vue.use(Chakra)
-Vue.use(Clipboard)
+//@ts-expect-error A simple description
+Vue.prototype.$event = new EventEmitter;
 
-Vue.config.productionTip = false
+Vue.use(Chakra);
+Vue.use(Clipboard);
+
+Vue.config.productionTip = false;
 
 new Vue({
   router,
   store,
-  render: h => h(App)
-}).$mount('#app')
+  render: (h) => h(App),
+}).$mount("#app");
