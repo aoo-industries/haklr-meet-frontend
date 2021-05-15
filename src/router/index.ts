@@ -17,7 +17,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/:id',
-    name: 'HelloID',
+    name: 'Hello',
     component: () => import(/* webpackChunkName: "about" */ '../views/Hello.vue')
   }
 ]
