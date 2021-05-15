@@ -14,7 +14,8 @@
           <CHeading size="xl">{{ myID }}</CHeading>
           <CButton v-clipboard="() => myID" v-clipboard:success="copied">
             Copy
-          </CButton>
+          </CButton> 
+          
         </CFlex>
       </CFlex>
       <CButton mt="20">
