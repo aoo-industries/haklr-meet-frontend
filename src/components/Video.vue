@@ -32,8 +32,11 @@ export default class Video extends Vue {
     console.log(this.peerArray);
 
     this.peer = new Peer(store.state.user.peerId);
-    this.peer.on("open", () => {
+    this.peer.on("open", async () => {
       console.log("Opened, your ID is: " + this.peer.id);
+      for (const peer of this.peerArray) {
+        await this.call(peer.id as string);
+      }
     });
 
     this.peer.on("connection", (conn) => {
@@ -51,9 +54,6 @@ export default class Video extends Vue {
         this.streams.push(stream);
       });
     });
-    for (const peer of this.peerArray) {
-      await this.call(peer.id as string);
-    }
   }
 
   async call(id: string): Promise<void> {
@@ -65,7 +65,7 @@ export default class Video extends Vue {
       await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     );
     console.log(call);
-    
+
     call.on("stream", (stream) => {
       this.streams.push(stream);
     });
