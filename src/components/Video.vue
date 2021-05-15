@@ -1,73 +1,46 @@
 <template>
   <CFlex align="center" justify-content="center">
-    <video
-      id="vid2"
-      :style="playing ? undefined : 'display: none'"
-      autoplay
-      playsinline
-      h="100%"
-      v-chakra
-    ></video>
-    <CFlex v-if="!playing" direction="column" gap="1rem" max-w="30rem">
-      <CHeading>
-        Hi.
-      </CHeading>
-      <CText>
-        This is your Meet room. There is currently no video transferring. Let's
-        start a call!
-      </CText>
-      <CFlex gap="1rem">
-        <CInput placeholder="Enter the ID" v-model="callID" />
-        <CButton @click="call(undefined)">
-          Call
-        </CButton>
-      </CFlex>
-      <CFlex direction="column" mt="8">
-        <CText font-size="2xl">Your ID</CText>
-        <CFlex gap="1rem">
-          <CHeading size="xl">{{ myID }}</CHeading>
-          <CButton v-clipboard="() => myID" v-clipboard:success="copied">
-            Copy
-          </CButton>
-        </CFlex>
-      </CFlex>
-    </CFlex>
+    <CGrid columns="repeat(9, 1fr)">
+      <video
+        v-for="(stream, i) in streams"
+        :key="i"
+        id="vid2"
+        autoplay
+        playsinline
+        :srcObject.prop="stream"
+        h="100%"
+        v-chakra
+      ></video>
+    </CGrid>
   </CFlex>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Peer, { DataConnection } from "peerjs";
+import store from "../store";
 
 @Component
 export default class Video extends Vue {
   connection!: DataConnection;
   peer!: Peer;
+  peerArray = store.state.userArray;
   vid2!: HTMLMediaElement;
-  myID = "";
-  callID = "";
-  playing = false;
+  streams: MediaStream[] = [];
 
-  mounted() {
-    const vid1 = document.getElementById("vid1");
-    this.vid2 = document.getElementById("vid2") as HTMLMediaElement;
+  async mounted(): Promise<void> {
+    console.log(this.peerArray);
 
-    this.peer = new Peer(
-      "" +
-        Math.floor(Math.random() * 3 ** 10)
-          .toString(36)
-          .substring(0, 3)
-    );
-    this.myID = this.peer.id;
+    this.peer = new Peer(store.state.user.peerId);
     this.peer.on("open", () => {
-      console.log("Your ID is: " + this.peer.id);
+      console.log("Opened, your ID is: " + this.peer.id);
     });
 
     this.peer.on("connection", (conn) => {
-      console.log(conn);
+      console.log("conn", conn);
       this.connection = conn;
       conn.on("data", (data) => {
-        console.log(data);
+        console.log("ddd", data);
       });
     });
     this.peer.on("call", async (call) => {
@@ -75,32 +48,27 @@ export default class Video extends Vue {
         await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
       );
       call.on("stream", (stream) => {
-        this.playing = true;
-        this.vid2.srcObject = stream;
+        this.streams.push(stream);
       });
     });
+    for (const peer of this.peerArray) {
+      await this.call(peer.id as string);
+    }
   }
-  connect(id: string) {
-    this.connection = this.peer.connect(id);
-  }
-  async call(id: string = this.callID) {
-    console.log(id);
+
+  async call(id: string): Promise<void> {
+    if (id == store.state.user.peerId) return;
+    console.log("Calling", id);
 
     const call = this.peer.call(
       id,
       await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     );
-
+    console.log(call);
+    
     call.on("stream", (stream) => {
-      this.playing = true;
-      this.vid2.srcObject = stream;
+      this.streams.push(stream);
     });
-  }
-  copied() {
-    this.myID = "copied";
-    setTimeout(() => {
-      this.myID = this.peer.id;
-    }, 1000);
   }
 }
 </script>

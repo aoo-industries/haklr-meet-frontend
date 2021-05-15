@@ -12,11 +12,13 @@
         align="center"
         justify-content="center"
         box-shadow="lg"
+        gap="3rem"
         z-index="900"
       >
         <CHeading color="gray">
-          Haklr Meet
+          Haklr Meet 
         </CHeading>
+        <CText as="span" size="lg"> {{ id }} </CText>
       </CFlex>
 
       <CFlex
@@ -56,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import store from "../store";
 import Chat from "../components/Chat.vue";
 import Control from "../components/Control.vue";
@@ -70,8 +72,12 @@ import Video from "../components/Video.vue";
   },
 })
 export default class Home extends Vue {
-  mounted() {
-    console.log(store.state.user.nickname, store.state.userArray);
+  mounted(): void {
+    if (!store.state.user.loggedIn) this.$router.push('/')
+  }
+
+  get id() {
+    return store.state.user.roomId
   }
 }
 </script>

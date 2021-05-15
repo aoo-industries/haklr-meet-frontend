@@ -1,6 +1,9 @@
 
 export interface User {
     nickname: string;
-    id: string;
+    roomId?: string;
+    id?: string;
+    peerId?: string;
+    loggedIn?: boolean;
 }
 

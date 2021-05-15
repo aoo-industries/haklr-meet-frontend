@@ -11,7 +11,7 @@
         <CText font-size="2xl">Your ID</CText>
         <CFlex gap="1rem">
           <CHeading size="xl">{{ $route.params.id }}</CHeading>
-          <CButton v-clipboard="() => $route.params.id">
+          <CButton v-clipboard="() => copyMaterial">
             Copy
           </CButton>
         </CFlex>
@@ -39,9 +39,11 @@ import { io } from "socket.io-client";
 export default class Hello extends Vue {
   public nick = "";
   public processing = false;
-  
+  public copyMaterial = window.location.href
+
   mounted(): void {
     if (!this.$route.params.id) this.$router.push("/");
+    if (store.state.user.loggedIn) this.$router.push("meet")
   }
 
   public onJoin(): void {
@@ -54,12 +56,19 @@ export default class Hello extends Vue {
         roomId: this.$route.params.id,
       },
     });
-    socket.on("roomConnectConfirm", (id: string, userArray: User[]) => {
-      store.state.user.roomId = this.$route.params.id;
-      store.state.user.nickname = this.nick;
-      store.state.user.peerId = id;
-      store.state.userArray = userArray;
-      this.$router.push('Meet')
+    socket.on("room_connect_confirm", (id: string, userArray: User[]) => {
+      let user = {} as User;
+      user.roomId = this.$route.params.id;
+      user.nickname = this.nick;
+      user.peerId = id;
+      console.log(userArray);
+      
+      store.commit('setUser', user)
+      store.commit('setUserArray', userArray)
+
+      console.log(store.state);
+      
+      this.$router.push('meet')
     });
     socket.on("connect_error", (err) => {
       throw err;
