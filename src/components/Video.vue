@@ -1,6 +1,7 @@
 <template>
   <CFlex align="center" justify-content="center">
-    <CGrid columns="repeat(9, 1fr)">
+    <!-- <CGrid :template-columns="`repeat(${Math.ceil(streams.length / 3)}, 1fr)`"> -->
+    <CGrid template-columns="repeat(3, 1fr)">
       <video
         v-for="(stream, i) in streams"
         :key="i"
@@ -11,6 +12,9 @@
         h="100%"
         v-chakra
       ></video>
+
+
+    
     </CGrid>
   </CFlex>
 </template>
@@ -29,9 +33,11 @@ export default class Video extends Vue {
   streams: MediaStream[] = [];
 
   async mounted(): Promise<void> {
-    console.log(this.peerArray);
+      
+    console.log("Peerz", this.peerArray);
 
-    this.peer = new Peer(store.state.user.peerId);
+    this.peer = new Peer(store.state.user.peerId /*, {host: 'localhost', port: 3001, path: '/peerBroker'}*/);
+    
     this.peer.on("open", async () => {
       console.log("Opened, your ID is: " + this.peer.id);
       for (const peer of this.peerArray) {
@@ -54,6 +60,7 @@ export default class Video extends Vue {
         this.streams.push(stream);
       });
     });
+
   }
 
   async call(id: string): Promise<void> {
