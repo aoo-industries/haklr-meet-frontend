@@ -5,11 +5,14 @@ declare module "*.vue" {
 
 import Vue from "vue";
 
+import { Socket } from "socket.io-client";
+
 import EventEmitter from "events";
 
 declare module "vue/types/vue" {
   interface Vue {
     $event: EventEmitter;
+    $socket: Socket;
     $toast(options: {
       title?: string;
       description?: string;

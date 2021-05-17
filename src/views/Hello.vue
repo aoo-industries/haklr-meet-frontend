@@ -33,6 +33,9 @@ import { Component, Vue } from "vue-property-decorator";
 import store from "../store";
 import { User } from  '../types'
 
+
+import socket from "../services/socket"
+
 import { io } from "socket.io-client";
 
 @Component
@@ -46,33 +49,11 @@ export default class Hello extends Vue {
     if (store.state.user.loggedIn) this.$router.push("meet")
   }
 
-  public onJoin(): void {
+  public async onJoin(): Promise<void> {
     if (!this.verify()) return;
     this.processing = true;
-    const socket = io(process.env.VUE_APP_BE_ADDRESS || "", {
-      auth: {
-        nickname: this.nick,
-        auth: "Seru ti na auth",
-        roomId: this.$route.params.id,
-      },
-    });
-    socket.on("room_connect_confirm", (id: string, userArray: User[]) => {
-      let user = {} as User;
-      user.roomId = this.$route.params.id;
-      user.nickname = this.nick;
-      user.peerId = id;
-      console.log(userArray);
-      
-      store.commit('setUser', user)
-      store.commit('setUserArray', userArray)
-
-      console.log(store.state);
-      
-      this.$router.push('meet')
-    });
-    socket.on("connect_error", (err) => {
-      throw err;
-    });
+    await socket.init(this.nick, this.$route.params.id)
+    this.$router.push("meet")
   }
 
   private verify(): boolean {

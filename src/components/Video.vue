@@ -1,5 +1,8 @@
 <template>
   <CFlex align="center" justify-content="center">
+    <CButton @click="abortion">
+      ABOIRT
+    </CButton>
     <!-- <CGrid :template-columns="`repeat(${Math.ceil(streams.length / 3)}, 1fr)`"> -->
     <CGrid template-columns="repeat(3, 1fr)">
       <video
@@ -12,9 +15,6 @@
         h="100%"
         v-chakra
       ></video>
-
-
-    
     </CGrid>
   </CFlex>
 </template>
@@ -30,14 +30,20 @@ export default class Video extends Vue {
   peer!: Peer;
   peerArray = store.state.userArray;
   vid2!: HTMLMediaElement;
+  calls: any[] = [];
+  lStream?: MediaStream;
   streams: MediaStream[] = [];
 
   async mounted(): Promise<void> {
-      
+    window.onbeforeunload = async () => {
+      this.abortion();
+    };
     console.log("Peerz", this.peerArray);
 
-    this.peer = new Peer(store.state.user.peerId /*, {host: 'localhost', port: 3001, path: '/peerBroker'}*/);
-    
+    this.peer = new Peer(
+      store.state.user.peerId /*, {host: 'localhost', port: 3001, path: '/peerBroker'}*/
+    );
+
     this.peer.on("open", async () => {
       console.log("Opened, your ID is: " + this.peer.id);
       for (const peer of this.peerArray) {
@@ -53,29 +59,57 @@ export default class Video extends Vue {
       });
     });
     this.peer.on("call", async (call) => {
-      call.answer(
-        await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
-      );
+      if (!this.lStream)
+        this.lStream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: true,
+        });
+
+      call.answer(this.lStream);
+      this.calls.push(call);
       call.on("stream", (stream) => {
         this.streams.push(stream);
       });
     });
+    this.$socket.on("peer_out", (streamId: string) => {
+      console.log("Peer Out received with id", streamId);
+      console.log(
+        `I got the following IDs on me ${this.streams.map(
+          (stream) => `${stream.id}; `
+        )}`
+      );
 
+      this.streams = this.streams.filter((stream) => stream.id !== streamId);
+    });
+    this.$socket.on("idid", (streamId: string) => {
+      this.$socket.emit("disconnect_me", this.lStream?.id);
+    });
   }
 
   async call(id: string): Promise<void> {
     if (id == store.state.user.peerId) return;
     console.log("Calling", id);
+    if (!this.lStream)
+      this.lStream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: true,
+      });
 
-    const call = this.peer.call(
-      id,
-      await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
-    );
-    console.log(call);
+    const call = this.peer.call(id, this.lStream);
 
+    this.calls.push(call);
     call.on("stream", (stream) => {
       this.streams.push(stream);
     });
+  }
+
+  abortion(): void {
+    console.log(this.lStream);
+
+    console.log("Disconnecting", this.lStream?.id);
+
+    this.$socket.emit("disconnect_me", this.lStream?.id);
+    this.$socket.disconnect();
   }
 }
 </script>
