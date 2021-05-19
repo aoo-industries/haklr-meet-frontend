@@ -1,11 +1,11 @@
 <template>
   <CFlex align="center" justify-content="center">
-    <CButton @click="abortion">
+    <!-- <CButton @click="abortion">
       ABOIRT
-    </CButton>
+    </CButton> -->
     <!-- <CGrid :template-columns="`repeat(${Math.ceil(streams.length / 3)}, 1fr)`"> -->
-    <CGrid template-columns="repeat(3, 1fr)">
-      <video
+    <CGrid :template-columns="`repeat(auto-fit, minmax(${size}rem, 1fr));`">
+      <!-- <video
         v-for="(stream, i) in streams"
         :key="i"
         id="vid2"
@@ -14,8 +14,13 @@
         :srcObject.prop="stream"
         h="100%"
         v-chakra
-      ></video>
+      ></video> -->
+    <img src="https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg" v-for="i in count" :key="i"/>
     </CGrid>
+
+
+
+
   </CFlex>
 </template>
 
@@ -33,7 +38,16 @@ export default class Video extends Vue {
   calls: any[] = [];
   lStream?: MediaStream;
   streams: MediaStream[] = [];
+  count = 3
+  sizes = [
+    [2, 20], [3, 15], [5, 10]
+  ]
 
+
+  get size() {
+    let found = this.sizes.find((s) => this.count > s[0])
+    return found ? found[1] : 10
+  }
   async mounted(): Promise<void> {
     window.onbeforeunload = async () => {
       this.abortion();
