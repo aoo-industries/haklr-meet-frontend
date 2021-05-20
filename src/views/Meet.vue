@@ -16,7 +16,7 @@
         z-index="900"
       >
         <CHeading color="gray">
-          Haklr Meet 
+          Haklr Meet
         </CHeading>
         <CText as="span" size="lg"> {{ id }} </CText>
       </CFlex>
@@ -39,7 +39,7 @@
         justify-content="center"
         z-index="950"
       >
-        <Chat p="5" pt="6" v-chakra> </Chat>
+        <Chat p="0" pt="6" v-chakra> </Chat>
       </CFlex>
       <CFlex
         grid-column-start="1"
@@ -53,6 +53,11 @@
       >
         <Control />
       </CFlex>
+    </CGrid>
+
+    <CGrid template-columns="auto 5rem" v-if="mobile">
+      <Video mobile />
+      <Control mobile />
     </CGrid>
   </div>
 </template>
@@ -73,11 +78,11 @@ import Video from "../components/Video.vue";
 })
 export default class Home extends Vue {
   mounted(): void {
-    if (!store.state.user.loggedIn) this.$router.push('/')
+    if (!store.state.user.loggedIn) this.$router.push("/");
   }
 
   get id() {
-    return store.state.user.roomId
+    return store.state.user.roomId;
   }
 }
 </script>

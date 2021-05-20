@@ -2,8 +2,7 @@ import { io } from "socket.io-client";
 import { User } from "../types"
 import store from "../store"
 
-import Vue from "vue";
-
+import Vue from 'vue'
 
 const init = async (nick: string, roomId: string): Promise<any> => {
     return new Promise<any>((resolve, reject) =>{
@@ -23,9 +22,10 @@ const init = async (nick: string, roomId: string): Promise<any> => {
         
         store.commit('setUser', user)
         store.commit('setUserArray', userArray)
-    
-        console.log(store.state);
+
         Vue.prototype.$socket = socket
+
+        console.log(store.state);
         resolve("")
       });
       socket.on("connect_error", (err: Error) => {

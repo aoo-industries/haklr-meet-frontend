@@ -1,23 +1,29 @@
 <template>
   <div>
     <CFlex gap="1rem">
-      <CButton @click="state.open.microphone = !state.open.microphone">{{
-        state.open.microphone ? "Not Speak" : "Tell a story"
-      }}</CButton>
-      <CButton @click="state.open.camera = !state.open.camera">{{
-        state.open.camera
-          ? "Step into the shadows"
-          : "Let the world see your glory"
-      }}</CButton>
-      <CButton @click="exit">Quit this shit already</CButton>
+      <CButton @click="state.open.microphone = !state.open.microphone">
+        <MicIcon v-if="state.open.microphone" />
+        <MicOffIcon v-else />
+      </CButton>
+      <CButton @click="state.open.camera = !state.open.camera">
+        <CameraIcon v-if="state.open.camera" />
+        <CameraOffIcon v-else />
+      </CButton>
     </CFlex>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { MicIcon, MicOffIcon, CameraIcon, CameraOffIcon } from "vue-feather-icons";
 
-@Component
+@Component({
+  components: {
+    MicIcon,
+    MicOffIcon,
+    CameraIcon, CameraOffIcon
+  },
+})
 export default class Controlpanel extends Vue {
   private state = {
     open: {
@@ -28,7 +34,7 @@ export default class Controlpanel extends Vue {
 
   exit(): void {
     window.sessionStorage.clear();
-    window.location.href = "/"
+    window.location.href = "/";
   }
 }
 </script>

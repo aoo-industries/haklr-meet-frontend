@@ -31,12 +31,10 @@
 import { Component, Vue } from "vue-property-decorator";
 
 import store from "../store";
-import { User } from  '../types'
 
 
 import socket from "../services/socket"
 
-import { io } from "socket.io-client";
 
 @Component
 export default class Hello extends Vue {
