@@ -43,7 +43,7 @@
       </CFlex>
       <CFlex
         grid-column-start="1"
-        grid-column-end="2 "
+        grid-column-end="2"
         align="center"
         justify-content="center"
         background="rgba(223, 232, 250, 0.2)"

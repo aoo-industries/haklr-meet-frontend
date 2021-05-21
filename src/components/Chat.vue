@@ -1,6 +1,6 @@
 <template>
-  <CFlex direction="column" justify-content="space-between">
-    <div>
+  <CFlex direction="column" h="100vh" justify-content="space-between">
+    <CBox overflow="auto" h="100%" my="10" ref="messageBox">
       <div v-for="(message, i) in messages" :key="i" mb="5" v-chakra>
         <b> {{ message.username }} </b>
         {{
@@ -12,7 +12,7 @@
         <br />
         {{ message.text }}
       </div>
-    </div>
+    </CBox>
 
     <CFlex position="relative" w="100%" bottom="20px" gap="0.5rem">
       <CInput v-model="current" placeholder="Enter" />
@@ -37,6 +37,144 @@ export default class Chat extends Vue {
       time: Date.now(),
       userId: "999",
     },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
   ];
 
   public current = "";
@@ -44,6 +182,7 @@ export default class Chat extends Vue {
   mounted(): void {
     this.$socket.on("chat_message", (message) => {
       this.messages.push(message);
+      (this.$refs.messageBox as any).scrollTop = (this.$refs.messageBox as any).scrollHeight
     });
   }
 
