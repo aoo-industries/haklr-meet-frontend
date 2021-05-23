@@ -1,31 +1,41 @@
 <template>
   <CFlex align="center" justify-content="center">
-    <!-- <CButton @click="abortion">
-      ABOIRT
-    </CButton> -->
-    <!-- <CGrid :template-columns="`repeat(${Math.ceil(streams.length / 3)}, 1fr)`"> -->
-    <CGrid :template-columns="`repeat(auto-fit, minmax(${size}rem, 1fr));`">
-      <!-- <video
+    <CSimpleGrid
+      :columns="
+        mobile
+          ? Math.ceil(Math.sqrt(streams.length * 0.35) / myzoom)
+          : Math.ceil(Math.sqrt(streams.length * 1.0))
+      "
+      :gap="'20px'"
+      v-if="streams.length > 1"
+    >
+      <video
         v-for="(stream, i) in streams"
         :key="i"
         id="vid2"
+        :width="100 / (mobile
+          ? Math.floor(Math.sqrt(streams.length * 0.35) / myzoom)
+          : Math.floor(Math.sqrt(streams.length * 1.0))) + 'vw'"
         autoplay
         playsinline
         :srcObject.prop="stream"
-        h="100%"
         v-chakra
-      ></video> -->
-    <img src="https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg" v-for="i in count" :key="i"/>
-    </CGrid>
+      ></video>
+    </CSimpleGrid>
 
-
-
-
+     <video
+        autoplay
+        playsinline
+        width="100vw"
+        :srcObject.prop="streams[0]"
+        v-else
+        v-chakra
+      ></video>
   </CFlex>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import Peer, { DataConnection } from "peerjs";
 import store from "../store";
 
@@ -38,24 +48,20 @@ export default class Video extends Vue {
   calls: any[] = [];
   lStream?: MediaStream;
   streams: MediaStream[] = [];
-  count = 3
-  sizes = [
-    [2, 20], [3, 15], [5, 10]
-  ]
+  count = 5;
+  myzoom = 1;
+  @Prop({ required: true, default: 1 }) readonly zoom: number = 1;
+  @Prop({ required: false, default: false }) readonly mobile?: boolean;
 
-
-  get size() {
-    let found = this.sizes.find((s) => this.count > s[0])
-    return found ? found[1] : 10
+  @Watch("zoom") watcher(value: number) {
+    this.myzoom = value;
   }
   async mounted(): Promise<void> {
-    window.onbeforeunload = async () => {
-      this.abortion();
-    };
+   
     console.log("Peerz", this.peerArray);
 
     this.peer = new Peer(
-      store.state.user.peerId /*, {host: 'localhost', port: 3001, path: '/peerBroker'}*/
+      store.state.user.peerId , {host: 'localhost', port: 3001, path: '/peerBroker'}
     );
 
     this.peer.on("open", async () => {
@@ -73,11 +79,13 @@ export default class Video extends Vue {
       });
     });
     this.peer.on("call", async (call) => {
-      if (!this.lStream)
+      if (!this.lStream) {
         this.lStream = await navigator.mediaDevices.getUserMedia({
           audio: false,
           video: true,
         });
+        store.commit("setStreamId", this.lStream.id);
+      }
 
       call.answer(this.lStream);
       this.calls.push(call);
@@ -103,11 +111,13 @@ export default class Video extends Vue {
   async call(id: string): Promise<void> {
     if (id == store.state.user.peerId) return;
     console.log("Calling", id);
-    if (!this.lStream)
+    if (!this.lStream) {
       this.lStream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: true,
       });
+      store.commit("setStreamId", this.lStream.id);
+    }
 
     const call = this.peer.call(id, this.lStream);
 

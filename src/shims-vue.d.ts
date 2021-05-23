@@ -13,6 +13,7 @@ declare module "vue/types/vue" {
   interface Vue {
     $event: EventEmitter;
     $socket: Socket;
+    $zoomLevel: number;
     $toast(options: {
       title?: string;
       description?: string;

@@ -1,6 +1,11 @@
 <template>
   <CFlex direction="column" h="100vh" justify-content="space-between">
-    <CBox overflow="auto" h="100%" my="10" ref="messageBox">
+  <CFlex>
+    <MessageSquareIcon m="3" size="3x" v-chakra  />
+    <CHeading size="lg" mt="5"> Chat </CHeading>
+  </CFlex>
+    <CCloseButton @click="$emit('switchMessages')" v-if="mobile" position="absolute" top="20px" right="15px" background="white" />
+    <CBox overflow="auto" h="100%" mx="3" ref="messageBox">
       <div v-for="(message, i) in messages" :key="i" mb="5" v-chakra>
         <b> {{ message.username }} </b>
         {{
@@ -14,7 +19,7 @@
       </div>
     </CBox>
 
-    <CFlex position="relative" w="100%" bottom="20px" gap="0.5rem">
+    <CFlex p="3" pb="0" position="relative" w="100%" bottom="20px" gap="0.5rem">
       <CInput v-model="current" placeholder="Enter" />
       <CButton @click="send">
         Send
@@ -28,12 +33,78 @@ import { Component, Vue } from "vue-property-decorator";
 
 import store from "../store";
 
-@Component
+import { MessageSquareIcon } from 'vue-feather-icons'
+
+@Component({
+  components: {
+    MessageSquareIcon
+  },
+  props: {
+    mobile: {
+      type: Boolean,
+      default: false,
+    },
+  },
+})
 export default class Chat extends Vue {
   private messages: Message[] = [
     {
       username: "Interviewer",
+      text: "Welcomse!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
       text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcome!",
+      time: Date.now(),
+      userId: "999",
+    },
+      {
+      username: "Interviewer",
+      text: "Welcomae!",
       time: Date.now(),
       userId: "999",
     },
@@ -117,61 +188,7 @@ export default class Chat extends Vue {
     },
       {
       username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
+      text: "Welcomea!",
       time: Date.now(),
       userId: "999",
     },

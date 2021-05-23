@@ -16,7 +16,7 @@ Vue.use(Chakra);
 Vue.use(Clipboard);
 
 Vue.config.productionTip = false;
-
+Vue.prototype.$zoomLevel = 1
 new Vue({
   router,
   store,
