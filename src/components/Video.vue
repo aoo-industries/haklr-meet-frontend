@@ -28,11 +28,13 @@
       <div
         v-for="(stream, i) in streams"
         position="relative"
-        :height=" mobile ? 'auto' :
-          videoHeight /
-            Math.ceil(
-              streams.length / Math.ceil(Math.sqrt(streams.length * 1.0))
-            )
+        :height="
+          mobile
+            ? 'auto'
+            : videoHeight /
+              Math.ceil(
+                streams.length / Math.ceil(Math.sqrt(streams.length * 1.0))
+              )
         "
         :key="i"
         @click="maximize(i)"
@@ -52,12 +54,14 @@
         </CFlex>
         <video
           id="vid2"
-          :height=" mobile ? 'auto' :
-          videoHeight /
-            Math.ceil(
-              streams.length / Math.ceil(Math.sqrt(streams.length * 1.0))
-            )
-        "
+          :height="
+            mobile
+              ? 'auto'
+              : videoHeight /
+                Math.ceil(
+                  streams.length / Math.ceil(Math.sqrt(streams.length * 1.0))
+                )
+          "
           autoplay
           playsinline
           :srcObject.prop="stream"
@@ -115,14 +119,8 @@ export default class Video extends Vue {
   async mounted(): Promise<void> {
     console.log("Peerz", this.peerArray);
     setInterval(() => {
-      console.log(this.streams.length);
-      console.log(Math.ceil(Math.sqrt(this.streams.length * 1.0)));
-      console.log(
-        Math.ceil(
-          this.streams.length / Math.ceil(Math.sqrt(this.streams.length * 1.0))
-        )
-      );
-    }, 3500);
+      this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.01;
+    }, 900);
     window.onresize = (ev: Event) => {
       const numero = ++this.tryCount;
       this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.25;
@@ -132,6 +130,7 @@ export default class Video extends Vue {
         this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.01;
       }, 300);
     };
+
     this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.01;
 
     this.peer = new Peer(store.state.user.peerId, {
