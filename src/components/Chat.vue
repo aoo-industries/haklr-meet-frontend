@@ -50,148 +50,23 @@ export default class Chat extends Vue {
   private messages: Message[] = [
     {
       username: "Interviewer",
-      text: "Welcomse!",
+      text: "Hello!",
       time: Date.now(),
       userId: "999",
     },
       {
       username: "Interviewer",
-      text: "Welcome!",
+      text: "Welcome to our interview",
       time: Date.now(),
       userId: "999",
     },
       {
       username: "Interviewer",
-      text: "Welcome!",
+      text: "Note that this chat is recorded",
       time: Date.now(),
       userId: "999",
     },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcomae!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcome!",
-      time: Date.now(),
-      userId: "999",
-    },
-      {
-      username: "Interviewer",
-      text: "Welcomea!",
-      time: Date.now(),
-      userId: "999",
-    },
+     
   ];
 
   public current = "";

@@ -1,36 +1,44 @@
 <template>
-  <CFlex align="center" justify-content="center">
+  <CFlex
+    align="center"
+    justify-content="space-around"
+    height="mobile"
+    ref="grid"
+  >
+    <video
+      autoplay
+      playsinline
+      :height="mobile ? 'auto' : videoHeight"
+      :width="mobile ? '100vw' : 'auto'"
+      :srcObject.prop="streams[primaryStream || 0]"
+      v-if="(streams.length === 1 || primaryStream)"
+      v-chakra
+    ></video>
     <CSimpleGrid
       :columns="
         mobile
           ? Math.ceil(Math.sqrt(streams.length * 0.35) / myzoom)
           : Math.ceil(Math.sqrt(streams.length * 1.0))
       "
-      :gap="'20px'"
-      v-if="streams.length > 1"
+      :gap="'2px'"
+      :height="mobile ? 'auto' : videoHeight"
+      v-else
     >
       <video
         v-for="(stream, i) in streams"
         :key="i"
         id="vid2"
-        :width="100 / (mobile
-          ? Math.floor(Math.sqrt(streams.length * 0.35) / myzoom)
-          : Math.floor(Math.sqrt(streams.length * 1.0))) + 'vw'"
+        :width="
+          100 / (true ? '1' : Math.floor(Math.sqrt(streams.length * 1.0))) +
+            'vw'
+        "
+        :height="videoHeight / Math.floor(Math.sqrt(streams.length * 1.0))"
         autoplay
         playsinline
         :srcObject.prop="stream"
         v-chakra
       ></video>
     </CSimpleGrid>
-
-     <video
-        autoplay
-        playsinline
-        width="100vw"
-        :srcObject.prop="streams[0]"
-        v-else
-        v-chakra
-      ></video>
   </CFlex>
 </template>
 
@@ -50,19 +58,39 @@ export default class Video extends Vue {
   streams: MediaStream[] = [];
   count = 5;
   myzoom = 1;
+  videoHeight = 3;
+  lastResize = Date.now();
+  tryCount = 0;
+  primaryStream = 0;
+
   @Prop({ required: true, default: 1 }) readonly zoom: number = 1;
   @Prop({ required: false, default: false }) readonly mobile?: boolean;
 
   @Watch("zoom") watcher(value: number) {
     this.myzoom = value;
   }
-  async mounted(): Promise<void> {
-   
-    console.log("Peerz", this.peerArray);
 
-    this.peer = new Peer(
-      store.state.user.peerId , {host: 'localhost', port: 3001, path: '/peerBroker'}
-    );
+  getWidth() {
+    return "1500";
+  }
+  async mounted(): Promise<void> {
+    console.log("Peerz", this.peerArray);
+    window.onresize = (ev: Event) => {
+      const numero = ++this.tryCount;
+      this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.25;
+
+      setTimeout(() => {
+        if (numero != this.tryCount) return;
+        this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.01;
+      }, 300);
+    };
+    this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.01;
+
+    this.peer = new Peer(store.state.user.peerId, {
+      host: "localhost",
+      port: 3001,
+      path: "/peerBroker",
+    });
 
     this.peer.on("open", async () => {
       console.log("Opened, your ID is: " + this.peer.id);

@@ -14,6 +14,7 @@ declare module "vue/types/vue" {
     $event: EventEmitter;
     $socket: Socket;
     $zoomLevel: number;
+    $refs: any[];
     $toast(options: {
       title?: string;
       description?: string;
