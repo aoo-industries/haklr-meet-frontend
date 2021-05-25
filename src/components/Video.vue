@@ -11,7 +11,8 @@
       :height="mobile ? 'auto' : videoHeight"
       :width="mobile ? '100vw' : 'auto'"
       :srcObject.prop="streams[primaryStream || 0]"
-      v-if="(streams.length === 1 || primaryStream)"
+      @click="minimize"
+      v-if="primaryStream || primaryStream === 0 || streams.length === 1"
       v-chakra
     ></video>
     <CSimpleGrid
@@ -24,20 +25,45 @@
       :height="mobile ? 'auto' : videoHeight"
       v-else
     >
-      <video
+      <div
         v-for="(stream, i) in streams"
-        :key="i"
-        id="vid2"
-        :width="
-          100 / (true ? '1' : Math.floor(Math.sqrt(streams.length * 1.0))) +
-            'vw'
+        position="relative"
+        :height=" mobile ? 'auto' :
+          videoHeight /
+            Math.ceil(
+              streams.length / Math.ceil(Math.sqrt(streams.length * 1.0))
+            )
         "
-        :height="videoHeight / Math.floor(Math.sqrt(streams.length * 1.0))"
-        autoplay
-        playsinline
-        :srcObject.prop="stream"
+        :key="i"
+        @click="maximize(i)"
         v-chakra
-      ></video>
+      >
+        <CFlex
+          position="absolute"
+          bottom="0"
+          top="0"
+          left="3"
+          align="center"
+          v-chakra
+        >
+          <div @click="maximize(i)">
+            <external-link-icon />
+          </div>
+        </CFlex>
+        <video
+          id="vid2"
+          :height=" mobile ? 'auto' :
+          videoHeight /
+            Math.ceil(
+              streams.length / Math.ceil(Math.sqrt(streams.length * 1.0))
+            )
+        "
+          autoplay
+          playsinline
+          :srcObject.prop="stream"
+          v-chakra
+        ></video>
+      </div>
     </CSimpleGrid>
   </CFlex>
 </template>
@@ -45,9 +71,14 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import Peer, { DataConnection } from "peerjs";
+import { ExternalLinkIcon } from "vue-feather-icons";
 import store from "../store";
 
-@Component
+@Component({
+  components: {
+    ExternalLinkIcon,
+  },
+})
 export default class Video extends Vue {
   connection!: DataConnection;
   peer!: Peer;
@@ -61,7 +92,7 @@ export default class Video extends Vue {
   videoHeight = 3;
   lastResize = Date.now();
   tryCount = 0;
-  primaryStream = 0;
+  primaryStream: number | null = null;
 
   @Prop({ required: true, default: 1 }) readonly zoom: number = 1;
   @Prop({ required: false, default: false }) readonly mobile?: boolean;
@@ -69,12 +100,29 @@ export default class Video extends Vue {
   @Watch("zoom") watcher(value: number) {
     this.myzoom = value;
   }
+  maximize(i: number) {
+    console.log(i, this.primaryStream);
+
+    this.primaryStream = i;
+  }
+  minimize() {
+    this.primaryStream = null;
+  }
 
   getWidth() {
     return "1500";
   }
   async mounted(): Promise<void> {
     console.log("Peerz", this.peerArray);
+    setInterval(() => {
+      console.log(this.streams.length);
+      console.log(Math.ceil(Math.sqrt(this.streams.length * 1.0)));
+      console.log(
+        Math.ceil(
+          this.streams.length / Math.ceil(Math.sqrt(this.streams.length * 1.0))
+        )
+      );
+    }, 3500);
     window.onresize = (ev: Event) => {
       const numero = ++this.tryCount;
       this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.25;
