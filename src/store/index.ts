@@ -34,19 +34,6 @@ export default new Vuex.Store({
     },
     setScreenShare(state, newStatus: boolean) {
       state.screenshareActive = newStatus
-    },
-    clr(state) {
-      state = {
-        user: {
-          nickname: "",
-          roomId: "",
-          peerId: "",
-          streamId: "",
-          loggedIn: false,
-        } as User,
-        userArray: [] as User[],
-        socket: {} as Socket
-      }
     }
   },
   actions: {},

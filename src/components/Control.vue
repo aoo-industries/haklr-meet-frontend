@@ -80,14 +80,7 @@ export default class Controlpanel extends Vue {
     console.log(store.state.screenshareActive);
     
   }
-  exit(): void {
-      console.log('exiting...', store.state.user.streamId);
-    
-    if(store.state.user.streamId) {
-    console.log("Disconnecting", store.state.user.streamId);
-    this.$socket.emit("disconnect_me", store.state.user.streamId);
-    this.$socket.disconnect();
-    }
+  exit(): void {    
     sessionStorage.clear()
     window.location.reload()
   }

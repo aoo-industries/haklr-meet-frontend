@@ -98,7 +98,7 @@ export default class Video extends Vue {
   tryCount = 0;
   primaryStream: number | null = null;
   screensharePeer?: Peer;
-  screenshareStream?: MediaStream;
+  screenshareStream!: MediaStream;
 
   @Prop({ required: true, default: 1 }) readonly zoom: number = 1;
   @Prop({ required: false, default: false }) readonly mobile?: boolean;
@@ -119,23 +119,21 @@ export default class Video extends Vue {
         }
       );
       this.screensharePeer.on("call", async (call) => {
-        let captureStream = null;
+        this.screenshareStream = await (navigator.mediaDevices as any).getDisplayMedia();
 
-        try {
-          captureStream = await (navigator.mediaDevices as any).getDisplayMedia();
-        } catch (err) {
-          console.error("Error: " + err);
-        }
-        console.log("answering", captureStream);
-        this.screenshareStream = captureStream;
+        console.log("answering", this.screenshareStream);
         call.answer(this.screenshareStream);
         this.calls.push(call);
-        this.$socket.emit("set_stream_id", this.screenshareStream?.id)
+        this.$socket.emit("add_stream_id", this.screenshareStream?.id);
+        this.screenshareStream.getTracks()[0].onended = () => {
+          console.info("ScreenShare has ended!");
+          this.$socket.emit("screenshare_disconnect", this.screenshareStream.id)
+        };
       });
       this.$socket.emit("screenshare_connect");
     } else {
       console.log("Would close ss");
-      this.$socket.emit("")
+      this.$socket.emit("");
     }
   }
   get screenShareState() {
@@ -185,7 +183,7 @@ export default class Video extends Vue {
     });
 
     this.peer.on("connection", (conn) => {
-      console.log("conn", conn);
+      console.log("new connection", conn);
       this.connection = conn;
       conn.on("data", (data) => {
         console.log("new data", data);
@@ -199,7 +197,6 @@ export default class Video extends Vue {
         });
         store.commit("setStreamId", this.lStream.id);
         this.$socket.emit("add_stream_id", this.lStream.id);
-
       }
 
       call.answer(this.lStream);
@@ -215,13 +212,19 @@ export default class Video extends Vue {
           (stream) => `${stream.id}; `
         )}`
       );
-
+      if (this.primaryStream === this.streams.indexOf(this.streams.find((str) => str.id === streamId) as MediaStream)) this.primaryStream = null
       this.streams = this.streams.filter((stream) => stream.id !== streamId);
+
+      console.log(
+        `Those are the filtered ones: ${this.streams.map(
+          (stream) => `${stream.id}; `
+        )}`
+      );
     });
 
     this.$socket.on("screenshare_connect", async (id) => {
       await this.call(`${id}-screenshare`);
-      this.primaryStream = this.streams.length
+      this.primaryStream = this.streams.length;
     });
   }
 
@@ -234,8 +237,7 @@ export default class Video extends Vue {
         video: true,
       });
       store.commit("setStreamId", this.lStream.id);
-      this.$socket.emit("add_stream_id", this.lStream.id)
-
+      this.$socket.emit("add_stream_id", this.lStream.id);
     }
 
     const call = this.peer.call(id, this.lStream);
