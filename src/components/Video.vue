@@ -128,13 +128,14 @@ export default class Video extends Vue {
         }
         console.log("answering", captureStream);
         this.screenshareStream = captureStream;
-        call.answer(captureStream);
+        call.answer(this.screenshareStream);
         this.calls.push(call);
-       
+        this.$socket.emit("set_stream_id", this.screenshareStream?.id)
       });
       this.$socket.emit("screenshare_connect");
     } else {
       console.log("Would close ss");
+      this.$socket.emit("")
     }
   }
   get screenShareState() {
@@ -197,6 +198,8 @@ export default class Video extends Vue {
           video: true,
         });
         store.commit("setStreamId", this.lStream.id);
+        this.$socket.emit("add_stream_id", this.lStream.id);
+
       }
 
       call.answer(this.lStream);
@@ -231,6 +234,8 @@ export default class Video extends Vue {
         video: true,
       });
       store.commit("setStreamId", this.lStream.id);
+      this.$socket.emit("add_stream_id", this.lStream.id)
+
     }
 
     const call = this.peer.call(id, this.lStream);
