@@ -88,7 +88,7 @@ export default class Chat extends Vue {
   }
 
   send(): void {
-    this.$socket.emit("chat_message", this.current);
+    if(this.current) this.$socket.emit("chat_message", this.current);
     this.current = "";
   }
 }
