@@ -221,7 +221,7 @@ export default class Video extends Vue {
 
     this.$socket.on("screenshare_connect", async (id) => {
       await this.call(`${id}-screenshare`);
-      //this.primaryStream = this.streams.length - 1
+      this.primaryStream = this.streams.length
     });
   }
 
