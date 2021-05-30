@@ -150,7 +150,7 @@ export default class Video extends Vue {
       console.log("conn", conn);
       this.connection = conn;
       conn.on("data", (data) => {
-        console.log("ddd", data);
+        console.log("new data", data);
       });
     });
     this.peer.on("call", async (call) => {
