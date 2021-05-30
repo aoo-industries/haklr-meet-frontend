@@ -14,6 +14,9 @@
         <CameraIcon v-if="state.open.camera" />
         <CameraOffIcon v-else />
       </CButton>
+      <CButton @click="handleScreenShare">
+        <MonitorIcon />
+      </CButton>
       <CButton v-if="mobile" @click="$emit('switchMessages')">
         <MessageSquareIcon />
       </CButton>
@@ -33,7 +36,8 @@ import {
   CameraIcon,
   CameraOffIcon,
   MessageSquareIcon,
-  PowerIcon
+  PowerIcon,
+  MonitorIcon
 } from "vue-feather-icons";
 
 @Component({
@@ -43,7 +47,8 @@ import {
     CameraIcon,
     CameraOffIcon,
     MessageSquareIcon,
-    PowerIcon
+    PowerIcon,
+    MonitorIcon
   },
   props: {
     mobile: {
@@ -70,9 +75,13 @@ export default class Controlpanel extends Vue {
       this.zoomLevel = 20
     }
   }
-
+  handleScreenShare() {
+    store.state.screenshareActive = !store.state.screenshareActive
+    console.log(store.state.screenshareActive);
+    
+  }
   exit(): void {
-    console.log('exiting...', store.state.user.streamId);
+      console.log('exiting...', store.state.user.streamId);
     
     if(store.state.user.streamId) {
     console.log("Disconnecting", store.state.user.streamId);

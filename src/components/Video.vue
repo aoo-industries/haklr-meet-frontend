@@ -97,12 +97,48 @@ export default class Video extends Vue {
   lastResize = Date.now();
   tryCount = 0;
   primaryStream: number | null = null;
+  screensharePeer?: Peer;
+  screenshareStream?: MediaStream;
 
   @Prop({ required: true, default: 1 }) readonly zoom: number = 1;
   @Prop({ required: false, default: false }) readonly mobile?: boolean;
 
   @Watch("zoom") watcher(value: number) {
     this.myzoom = value;
+  }
+  @Watch("screenShareState") handleScreenShare(value: boolean) {
+    if (value) {
+      console.log("Opening ss");
+
+      this.screensharePeer = new Peer(
+        `${store.state.user.peerId}-screenshare`,
+        {
+          host: "localhost",
+          port: 3001,
+          path: "/peerBroker",
+        }
+      );
+      this.screensharePeer.on("call", async (call) => {
+        let captureStream = null;
+
+        try {
+          captureStream = await (navigator.mediaDevices as any).getDisplayMedia();
+        } catch (err) {
+          console.error("Error: " + err);
+        }
+        console.log("answering", captureStream);
+        this.screenshareStream = captureStream;
+        call.answer(captureStream);
+        this.calls.push(call);
+       
+      });
+      this.$socket.emit("screenshare_connect");
+    } else {
+      console.log("Would close ss");
+    }
+  }
+  get screenShareState() {
+    return store.state.screenshareActive;
   }
   maximize(i: number) {
     console.log(i, this.primaryStream);
@@ -119,6 +155,7 @@ export default class Video extends Vue {
   async mounted(): Promise<void> {
     console.log("Peerz", this.peerArray);
     setInterval(() => {
+      if (!this.$refs.grid) return;
       this.videoHeight = (this.$refs.grid as any).$el.clientHeight / 1.01;
     }, 900);
     window.onresize = (ev: Event) => {
@@ -178,8 +215,10 @@ export default class Video extends Vue {
 
       this.streams = this.streams.filter((stream) => stream.id !== streamId);
     });
-    this.$socket.on("idid", (streamId: string) => {
-      this.$socket.emit("disconnect_me", this.lStream?.id);
+
+    this.$socket.on("screenshare_connect", async (id) => {
+      await this.call(`${id}-screenshare`);
+      //this.primaryStream = this.streams.length - 1
     });
   }
 

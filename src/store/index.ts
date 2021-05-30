@@ -15,9 +15,11 @@ export default new Vuex.Store({
       peerId: "",
       streamId: "",
       loggedIn: false,
+      screenshareActive: false
     } as User,
     userArray: [] as User[],
     socket: {} as Socket,
+    screenshareActive: false
   },
   mutations: {
     setUser(state, user: User) {
@@ -29,6 +31,9 @@ export default new Vuex.Store({
     },
     setStreamId(state, streamId: string) {
       state.user.streamId = streamId
+    },
+    setScreenShare(state, newStatus: boolean) {
+      state.screenshareActive = newStatus
     },
     clr(state) {
       state = {

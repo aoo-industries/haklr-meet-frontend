@@ -6,5 +6,6 @@ export interface User {
     streamId?: string;
     peerId?: string;
     loggedIn?: boolean;
+    screenshareActive: boolean;
 }
 
